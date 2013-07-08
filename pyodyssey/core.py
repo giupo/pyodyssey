@@ -29,7 +29,7 @@ from getpass import getuser
 from flypwd import flypwd
 from argparse import ArgumentParser
 from bs4 import BeautifulSoup
-
+from urlparse import urlunparse
 import logging
 logging.basicConfig()
 log = logging.getLogger(__name__)
@@ -74,10 +74,12 @@ class OdysseyClient(object):
             DSSIGNIN = "url_default",
             DSPREAUTH = "",
             path = "/dana-na",
-            expires = "12-Nov-1996",
+            expires = "12-Nov-1996", # Only god knows...
             DSLastAccess = self.DSLastAccess)
 
-        url = ''.join(["https://",self.host,__WELCOME_PATH__])
+        url = urlunparse(('https',
+                          self.host,
+                          __WELCOME_PATH__, None, None, None))
         log.debug(url)
         self.last_res = requests.get(url,
                           cookies = cookies,
@@ -98,7 +100,9 @@ class OdysseyClient(object):
             DSSignInURL="/",
             DSLastAccess=self.DSLastAccess)
 
-        url = ''.join(["https://",self.host,__LOGIN_PATH__])
+        url = urlunparse(('https',
+                          self.host,
+                          __LOGIN_PATH__,None, None, None))
         log.debug(url)
         post_data = dict(
             tz_offset="60",
@@ -122,7 +126,9 @@ class OdysseyClient(object):
     def _starter1(self):
         headers = dict(self.headers)
         headers.update({"Referer" : "https://"+self.host+__STARTER_PATH__})
-        url = ''.join(["https://",self.host,__STARTER_PATH__])
+        url = urlunparse(('https',
+                          self.host,
+                          __STARTER_PATH__, None, None, None))
         log.debug(url)
         cookies = dict(
             DSSignInURL = "/",
@@ -145,7 +151,9 @@ class OdysseyClient(object):
             "Referer" : "https://"+self.host+__STARTER_PATH__,
             "Content-Type" : "application/x-www-form-urlencoded",
         })
-        url = ''.join(["https://",self.host,__STARTER_PATH__])
+        url = urlunparse(('https',
+                          self.host,
+                          __STARTER_PATH__, None, None, None))
         log.debug(url)
         post_data = dict(
             xsauth = self.xsauth,
@@ -174,7 +182,9 @@ class OdysseyClient(object):
 
     def heartbeat(self):
         log.info("sending heartbeat...")
-        url = ''.join(["https://"+self.host, __INFRANET_PATH__])
+        url = urlunparse(('https',
+                          self.host,
+                          __INFRANET_PATH__, None, None, None))
         params = dict(
             heartbeat="1",
             clientlessEnabled="1",
@@ -215,8 +225,11 @@ class OdysseyClient(object):
 
     def run(self):
         self.auth()
-        while(self.heartbeat()):
-           time.sleep(self.interval*1000)
+        try:
+            while(self.heartbeat()): # the level of shame here is 9000
+               time.sleep(self.interval/10)
+        except KeyboardInterrupt:
+            pass
 
 
 
@@ -225,11 +238,10 @@ def main():
         description = "Client for Odyssey Networks")
 
     parser.add_argument("host", help="Host IP of Odyssey website")
-    parser.add_argument("pwd", help="password to be stored by flypwd")
 
     args = parser.parse_args()
     log.debug(args.host)
-    odyssey = OdysseyClient(args.host, getuser(), flypwd(args.pwd))
+    odyssey = OdysseyClient(args.host, getuser(), flypwd())
     odyssey.run()
 
 
