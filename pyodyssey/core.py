@@ -23,8 +23,8 @@
 
 import requests
 import time
-import sched
 import re
+
 from getpass import getuser
 from flypwd import flypwd
 from argparse import ArgumentParser
