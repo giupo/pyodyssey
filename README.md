@@ -1,5 +1,5 @@
 =========
-PyOdissey
+PyOdyssey
 ========
 
-Client for Juniper Odissey Network
+Client for Juniper Odyssey Network
