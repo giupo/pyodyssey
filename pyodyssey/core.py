@@ -30,15 +30,23 @@ from flypwd import flypwd
 from argparse import ArgumentParser
 from bs4 import BeautifulSoup
 from urlparse import urlunparse
+
 import logging
 logging.basicConfig()
 log = logging.getLogger(__name__)
-log.setLevel(logging.INFO)
+log.setLevel(logging.DEBUG)
+
+# made just to easly switch from http to https
+__PROTOCOL__ = 'https'
 
 __WELCOME_PATH__ = "/dana-na/auth/url_default/welcome.cgi"
 __LOGIN_PATH__   = "/dana-na/auth/url_default/login.cgi"
 __STARTER_PATH__ = "/dana/home/starter0.cgi"
 __INFRANET_PATH__= "/dana/home/infranet.cgi"
+
+
+class AuthenticationException(Exception):
+    pass
 
 class OdysseyClient(object):
     def __init__(self, host, username = None, password = None):
@@ -77,7 +85,7 @@ class OdysseyClient(object):
             expires = "12-Nov-1996", # Only god knows...
             DSLastAccess = self.DSLastAccess)
 
-        url = urlunparse(('https',
+        url = urlunparse((__PROTOCOL__,
                           self.host,
                           __WELCOME_PATH__, None, None, None))
         log.debug(url)
@@ -90,7 +98,10 @@ class OdysseyClient(object):
     def _login(self):
         headers = dict(self.headers)
         headers.update({
-            "Referer" : "https://"+self.host+__WELCOME_PATH__,
+            "Referer" : urlunparse((
+                __PROTOCOL__,
+                self.host,
+                __WELCOME_PATH__, None, None, None)),
             "Content-Type" : "application/x-www-form-urlencoded",
             "Host" : self.host })
 
@@ -100,7 +111,7 @@ class OdysseyClient(object):
             DSSignInURL="/",
             DSLastAccess=self.DSLastAccess)
 
-        url = urlunparse(('https',
+        url = urlunparse((__PROTOCOL__,
                           self.host,
                           __LOGIN_PATH__,None, None, None))
         log.debug(url)
@@ -117,16 +128,32 @@ class OdysseyClient(object):
                         data=post_data,
                         verify=False)
         # allow_redirects=False)
-        self.DSID = self.last_res.history[0].cookies['DSID']
-        self.xsauth = BeautifulSoup(self.last_res.text).find('input').get('value')
-        log.debug("DSID: %s" % self.DSID)
-        log.debug("xsauth: %s" % self.xsauth)
+
+        # Don't ask, won't tell.
+        log.debug(self.last_res.text)
+        try :
+            self.DSID = self.last_res.history[0].cookies['DSID']
+            self.xsauth = BeautifulSoup(self.last_res.text).find('input').get('value')
+            log.debug("DSID: %s" % self.DSID)
+            log.debug("xsauth: %s" % self.xsauth)
+        except KeyError as e:
+            log.error(e)
+            raise AuthenticationException()
+        except AttributeError as e:
+            log.error(e)
+            raise AuthenticationException()
 
 
     def _starter1(self):
+        # to be honest, i ignore why I hould make this GET request...
         headers = dict(self.headers)
-        headers.update({"Referer" : "https://"+self.host+__STARTER_PATH__})
-        url = urlunparse(('https',
+        headers.update({"Referer" :
+                        urlunparse((__PROTOCOL__,
+                                    self.host,
+                                    __STARTER_PATH__, None, None, None))})
+        # "https://"+self.host+__STARTER_PATH__})
+
+        url = urlunparse((__PROTOCOL__,
                           self.host,
                           __STARTER_PATH__, None, None, None))
         log.debug(url)
@@ -148,10 +175,15 @@ class OdysseyClient(object):
     def _starter2(self):
         headers = dict(self.headers)
         headers.update({
-            "Referer" : "https://"+self.host+__STARTER_PATH__,
+            "Referer" : urlunparse((
+                __PROTOCOL__,
+                self.host,
+                __STARTER_PATH__,
+                None, None, None)),
+            # "https://"+self.host+__STARTER_PATH__,
             "Content-Type" : "application/x-www-form-urlencoded",
         })
-        url = urlunparse(('https',
+        url = urlunparse((__PROTOCOL__,
                           self.host,
                           __STARTER_PATH__, None, None, None))
         log.debug(url)
@@ -182,7 +214,7 @@ class OdysseyClient(object):
 
     def heartbeat(self):
         log.info("sending heartbeat...")
-        url = urlunparse(('https',
+        url = urlunparse((__PROTOCOL__,
                           self.host,
                           __INFRANET_PATH__, None, None, None))
         params = dict(
