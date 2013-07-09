@@ -61,6 +61,14 @@ def fail_res(*args, **kwargs):
     return MockResponse(text=bad_html, cookies = cookies, history=history)
 
 
+def test_connection_error():
+    try:
+        o = OdysseyClient('ovviamente.non.esisto.org', 'john', 'doe')
+        o.auth()
+        assert False
+    except requests.ConnectionError:
+        pass
+
 def test_authentication_successful():
     with patch.object(requests.sessions.Session, 'request', return_value=suc_res()) as mock_method:
         o = OdysseyClient('localhost', 'john', 'doe')

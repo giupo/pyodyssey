@@ -34,7 +34,7 @@ from urlparse import urlunparse
 import logging
 logging.basicConfig()
 log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 
 # made just to easly switch from http to https
 __PROTOCOL__ = 'https'
