@@ -26,7 +26,6 @@ import time
 import re
 
 from getpass import getuser
-from flypwd import flypwd
 from argparse import ArgumentParser
 from bs4 import BeautifulSoup
 from urlparse import urlunparse
@@ -49,19 +48,10 @@ class AuthenticationException(Exception):
     pass
 
 class OdysseyClient(object):
-    def __init__(self, host, username = None, password = None):
+    def __init__(self, host, username, password):
         self.host = host
-
-        if(username is None):
-            self.username = getuser()
-        else:
-            self.username = username
-
-        if(password is None):
-            self.password = flypwd()
-        else:
-            self.password = password
-
+        self.username = username
+        self.password = password
         self.interval = 0
         self.headers = {
             "User-Agent" : "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:22.0) Gecko/20100101 Firefox/22.0",
@@ -266,12 +256,16 @@ class OdysseyClient(object):
 
 
 def main():
-    parser = ArgumentParser(
-        description = "Client for Odyssey Networks")
-
+    parser = ArgumentParser(description = "Client for Odyssey Networks")
     parser.add_argument("host", help="Host IP of Odyssey website")
-    parser.add_argument("user", nargs='?', help="Username", default=getuser())
-    parser.add_argument("password", nargs='?', help="Password", default=flypwd())
+    try:
+        from flypwd import flypwd
+        parser.add_argument("user", nargs='?', help="Username", default=getuser())
+        parser.add_argument("password", nargs='?', help="Password", default=flypwd())
+    except ImportError as e:
+        log.info("no flypwd...")
+        parser.add_argument("user", help="Username")
+        parser.add_argument("password", help="Password")
 
     args = parser.parse_args()
     log.debug(args.host)

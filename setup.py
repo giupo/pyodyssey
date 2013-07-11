@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='PyOdyssey',
-    version='0.2.0',
+    version='0.3.0',
     author='Giuseppe Acito',
     author_email='giuseppe.acito@gmail.com',
     packages = find_packages(exclude=['test']),
@@ -11,7 +11,7 @@ setup(
     long_description = open('README.md').read(),
     url = 'http://pypi.python.org/pypi/PyOdyssey/',
     install_requires = [
-        "flypwd",
+#"flypwd",
         "requests",
         "beautifulsoup4",
     ],
@@ -21,5 +21,5 @@ setup(
         ]
     },
 
-    dependency_links=['https://github.com/giupo/flypwd/tarball/master#egg=flypwd']
+#   dependency_links=['https://github.com/giupo/flypwd/tarball/master#egg=flypwd']
 )
