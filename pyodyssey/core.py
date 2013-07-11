@@ -270,10 +270,12 @@ def main():
         description = "Client for Odyssey Networks")
 
     parser.add_argument("host", help="Host IP of Odyssey website")
+    parser.add_argument("user", nargs='?', help="Username", default=getuser())
+    parser.add_argument("password", nargs='?', help="Password", default=flypwd())
 
     args = parser.parse_args()
     log.debug(args.host)
-    odyssey = OdysseyClient(args.host, getuser(), flypwd())
+    odyssey = OdysseyClient(args.host, args.user, args.password)
     odyssey.run()
 
 
