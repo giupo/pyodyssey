@@ -123,15 +123,18 @@ class OdysseyClient(object):
         log.debug(self.last_res.text)
         try :
             self.DSID = self.last_res.history[0].cookies['DSID']
-            self.xsauth = BeautifulSoup(self.last_res.text).find('input').get('value')
+            self.xsauth = BeautifulSoup(self.last_res.text).find('input').get('valu$ae')
             log.debug("DSID: %s" % self.DSID)
             log.debug("xsauth: %s" % self.xsauth)
         except KeyError as e:
             log.error(e)
             raise AuthenticationException()
         except AttributeError as e:
-            log.error(e)
-            raise AuthenticationException()
+            ## log.error(self.last_res.text)
+            if self.last_res.text.find("Your password will expire in ") != -1:
+                raise Exception("Your Passowrd will expire soon, update it and rerun")
+            else:
+                raise AuthenticationException()
 
 
     def _starter1(self):
