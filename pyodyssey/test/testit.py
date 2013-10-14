@@ -74,6 +74,8 @@ def test_authentication_successful():
         o = OdysseyClient('localhost', 'john', 'doe')
         o.auth()
 
+    print o.DSID
+    print o.xsauth
     assert o.DSID == 'abcdefg123'
     assert o.xsauth == 'qazwsx123'
 

@@ -121,9 +121,9 @@ class OdysseyClient(object):
 
         # Don't ask, won't tell.
         log.debug(self.last_res.text)
-        try :
+        try:
             self.DSID = self.last_res.history[0].cookies['DSID']
-            self.xsauth = BeautifulSoup(self.last_res.text).find('input').get('valu$ae')
+            self.xsauth = BeautifulSoup(self.last_res.text).find('input').get('value')
             log.debug("DSID: %s" % self.DSID)
             log.debug("xsauth: %s" % self.xsauth)
         except KeyError as e:
@@ -138,7 +138,7 @@ class OdysseyClient(object):
 
 
     def _starter1(self):
-        # to be honest, i ignore why I hould make this GET request...
+        # to be honest, i ignore why I should make this GET request...
         headers = dict(self.headers)
         headers.update({"Referer" :
                         urlunparse((__PROTOCOL__,
