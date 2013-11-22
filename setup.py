@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='PyOdyssey',
-    version='0.3.0',
+    version='0.3.1',
     author='Giuseppe Acito',
     author_email='giuseppe.acito@gmail.com',
     packages = find_packages(exclude=['test']),
