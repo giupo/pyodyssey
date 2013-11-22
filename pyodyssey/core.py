@@ -261,14 +261,8 @@ class OdysseyClient(object):
 def main():
     parser = ArgumentParser(description = "Client for Odyssey Networks")
     parser.add_argument("host", help="Host IP of Odyssey website")
-    try:
-        from flypwd import flypwd
-        parser.add_argument("user", nargs='?', help="Username", default=getuser())
-        parser.add_argument("password", nargs='?', help="Password", default=flypwd())
-    except ImportError as e:
-        log.info("no flypwd...")
-        parser.add_argument("user", help="Username")
-        parser.add_argument("password", help="Password")
+    parser.add_argument("user", help="Username")
+    parser.add_argument("password", help="Password")
 
     args = parser.parse_args()
     log.debug(args.host)
