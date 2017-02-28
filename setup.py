@@ -5,11 +5,11 @@ setup(
     version='0.3.1',
     author='Giuseppe Acito',
     author_email='giuseppe.acito@gmail.com',
-    packages = find_packages(exclude=['test']),
-    license = open('LICENSE.txt').read(),
-    description = 'Client for Juniper Networks',
-    long_description = open('README.md').read(),
-    url = 'http://pypi.python.org/pypi/PyOdyssey/',
+    packages=find_packages(exclude=['test']),
+    license=open('LICENSE.txt').read(),
+    description='Client for Juniper Networks',
+    long_description=open('README.md').read(),
+    url='http://pypi.python.org/pypi/PyOdyssey/',
     install_requires = [
 #"flypwd",
         "requests",
@@ -17,9 +17,6 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-           'pyodyssey = pyodyssey.core:main',
+            'pyodyssey = pyodyssey.core:main',
         ]
-    },
-
-#   dependency_links=['https://github.com/giupo/flypwd/tarball/master#egg=flypwd']
-)
+    })
